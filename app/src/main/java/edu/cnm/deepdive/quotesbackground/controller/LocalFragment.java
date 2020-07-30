@@ -19,25 +19,30 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView.OnQueryTextListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.SearchView.OnQueryTextListener;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import edu.cnm.deepdive.quotesbackground.R;
 import edu.cnm.deepdive.quotesbackground.view.QuoteAdapter;
-import edu.cnm.deepdive.quotesbackground.databinding.FragmentLocalBinding;
 import edu.cnm.deepdive.quotesbackground.viewmodel.MainViewModel;
 
 public class LocalFragment extends Fragment implements OnQueryTextListener {
 
-  private FragmentLocalBinding binding;
   private MainViewModel viewModel;
+  private SearchView search;
+  private RecyclerView quotes;
 
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    binding = FragmentLocalBinding.inflate(inflater, container, false);
-    binding.search.setOnQueryTextListener(this);
-    return binding.getRoot();
+    View root = inflater.inflate(R.layout.fragment_local, container, false);
+    search = root.findViewById(R.id.search);
+    quotes = root.findViewById(R.id.quotes);
+    search.setOnQueryTextListener(this);
+    return root;
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -46,18 +51,12 @@ public class LocalFragment extends Fragment implements OnQueryTextListener {
     super.onViewCreated(view, savedInstanceState);
     viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
     viewModel.getFilteredQuotes().observe(getViewLifecycleOwner(), (quotes) ->
-        binding.quotes.setAdapter(new QuoteAdapter(getContext(), quotes)));
+        this.quotes.setAdapter(new QuoteAdapter(getContext(), quotes)));
     viewModel.getFilter().observe(getViewLifecycleOwner(), (filter) -> {
-      if (!binding.search.getQuery().equals(filter)) {
-        binding.search.setQuery(filter, false);
+      if (!search.getQuery().equals(filter)) {
+        search.setQuery(filter, false);
       }
     });
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    binding = null;
   }
 
   @Override

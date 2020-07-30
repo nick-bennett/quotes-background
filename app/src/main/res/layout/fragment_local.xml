@@ -8,7 +8,7 @@
   android:padding="@dimen/half_margin"
   tools:context=".controller.LocalFragment">
 
-  <SearchView
+  <androidx.appcompat.widget.SearchView
     android:id="@+id/search"
     android:layout_width="0dp"
     android:layout_height="wrap_content"

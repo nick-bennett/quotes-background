@@ -17,12 +17,13 @@ package edu.cnm.deepdive.quotesbackground.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.cnm.deepdive.quotesbackground.R;
 import edu.cnm.deepdive.quotesbackground.view.QuoteAdapter.Holder;
-import edu.cnm.deepdive.quotesbackground.databinding.ItemQuoteBinding;
 import edu.cnm.deepdive.quotesbackground.model.entity.Quote;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class QuoteAdapter extends RecyclerView.Adapter<Holder> {
   @NonNull
   @Override
   public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    return new Holder(ItemQuoteBinding.inflate(LayoutInflater.from(context), parent, false));
+    return new Holder(LayoutInflater.from(context).inflate(R.layout.item_quote, parent, false));
   }
 
   @Override
@@ -56,20 +57,21 @@ public class QuoteAdapter extends RecyclerView.Adapter<Holder> {
     return quotes.size();
   }
 
-
   class Holder extends RecyclerView.ViewHolder {
 
-    private final ItemQuoteBinding binding;
+    private final TextView text;
+    private final TextView author;
 
-    private Holder(@NonNull ItemQuoteBinding binding) {
-      super(binding.getRoot());
-      this.binding = binding;
+    private Holder(@NonNull View itemView) {
+      super(itemView);
+      text = itemView.findViewById(R.id.text);
+      author = itemView.findViewById(R.id.author);
     }
 
     private void bind(int position) {
       Quote quote = quotes.get(position);
-      binding.text.setText(quote.getText());
-      binding.author.setText(String.format(citationFormat,
+      text.setText(quote.getText());
+      author.setText(String.format(citationFormat,
           (
               (quote.getAuthor() != null && !quote.getAuthor().isEmpty())
                   ? quote.getAuthor()

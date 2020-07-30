@@ -19,12 +19,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import edu.cnm.deepdive.quotesbackground.R;
-import edu.cnm.deepdive.quotesbackground.databinding.FragmentRemoteBinding;
 import edu.cnm.deepdive.quotesbackground.model.entity.Quote;
 import edu.cnm.deepdive.quotesbackground.viewmodel.MainViewModel;
 
@@ -36,14 +36,17 @@ import edu.cnm.deepdive.quotesbackground.viewmodel.MainViewModel;
  */
 public class RemoteFragment extends Fragment {
 
-  private FragmentRemoteBinding binding;
   private String anonymousCitation;
+  private TextView text;
+  private TextView author;
 
   public View onCreateView(@NonNull LayoutInflater inflater,
       ViewGroup container, Bundle savedInstanceState) {
     anonymousCitation = getString(R.string.anonymous_citation);
-    binding = FragmentRemoteBinding.inflate(inflater, container, false);
-    return binding.getRoot();
+    View root = inflater.inflate(R.layout.fragment_remote, container, false);
+    text = root.findViewById(R.id.text);
+    author = root.findViewById(R.id.author);
+    return root;
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -52,19 +55,13 @@ public class RemoteFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     MainViewModel viewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
     viewModel.getMostRecentQuote().observe(getViewLifecycleOwner(), this::displayQuote);
-    binding.refresh.setOnClickListener((v) -> viewModel.fetchRemote());
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    binding = null;
+    view.findViewById(R.id.refresh).setOnClickListener((v) -> viewModel.fetchRemote());
   }
 
   private void displayQuote(Quote quote) {
     if (quote != null) {
-      binding.text.setText(quote.getText());
-      binding.author.setText(getString(R.string.citation_format,
+      text.setText(quote.getText());
+      author.setText(getString(R.string.citation_format,
           (
               (quote.getAuthor() != null && !quote.getAuthor().isEmpty())
                   ? quote.getAuthor()
