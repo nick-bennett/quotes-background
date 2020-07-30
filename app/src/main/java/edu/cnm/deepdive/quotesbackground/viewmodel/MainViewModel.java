@@ -39,7 +39,7 @@ public class MainViewModel extends AndroidViewModel implements LifecycleObserver
 
   public MainViewModel(@NonNull Application application) {
     super(application);
-    quoteRepository = QuoteRepository.getInstance();
+    quoteRepository = new QuoteRepository(application);
     filter = new MutableLiveData<>("");
     filteredQuotes = Transformations.switchMap(filter, quoteRepository::search);
     throwable = new MutableLiveData<>();

@@ -36,27 +36,18 @@ public class QuoteRepository {
   private static final String LIKE_PATTERN = "%%%s%%";
   private static final int MAX_NETWORK_THREADS = 4;
 
-  @SuppressLint("StaticFieldLeak")
-  private static Context context;
-
+  private final Context context;
   private final QuoteDao quoteDao;
   private final ForismaticService forismaticService;
   private final ExecutorService networkPool;
   private final String mruSizePrefKey;
 
-  private QuoteRepository() {
+  public QuoteRepository(Context context) {
+    this.context = context;
     quoteDao = QuoteDatabase.getInstance().getQuoteDao();
     forismaticService = ForismaticService.getInstance();
     networkPool = Executors.newFixedThreadPool(MAX_NETWORK_THREADS);
     mruSizePrefKey = context.getString(R.string.mru_size_pref_key);
-  }
-
-  public static void setContext(Context context) {
-    QuoteRepository.context = context;
-  }
-
-  public static QuoteRepository getInstance() {
-    return InstanceHolder.INSTANCE;
   }
 
   public LiveData<List<Quote>> list() {
@@ -114,12 +105,6 @@ public class QuoteRepository {
             : Completable.fromAction(() -> {})
     )
         .subscribeOn(Schedulers.io());
-  }
-
-  private static class InstanceHolder {
-
-    private static final QuoteRepository INSTANCE = new QuoteRepository();
-
   }
 
 }
